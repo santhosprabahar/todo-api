@@ -37,8 +37,8 @@ app.post('/todos', function (req, res)
 
 app.delete('/todos/:id', function (req, res){
 	var todoid = parseInt(req.params.id, 10);
-	var matchedtodo;
-	matchedtodo = _.findWhere(todos, {id:todoid});
+	// var matchedtodo;
+	var matchedtodo = _.findWhere(todos, {id:todoid});
 
 	if(!matchedtodo)
 	{
@@ -75,6 +75,41 @@ app.get('/todos/:id',function (req, res){
 
 	 }
 });
+
+app.put('/todos/:id', function (req, res){
+
+	var todoid = parseInt(req.params.id, 10);
+	// var matchedtodo;
+	var matchedtodo = _.findWhere(todos, {id:todoid});
+	var body = _.pick(req.body, "description", "completed");
+	var validattributes = {};
+
+	if(!matchedtodo)
+	{
+		res.status(404).send("error matchedtodo");
+	}
+	if(body.hasOwnProperty('completed') && _.isBoolean(body.completed)){
+
+		validattributes.completed = body.completed; 
+	}else if(body.hasOwnProperty('completed'))
+	{
+		res.status(404).send("error at completed object");
+	}
+
+	if(body.hasOwnProperty('description') && _.isString(body.description) && body.description.trim().length > 0){
+
+		validattributes.description = body.description;
+	}else if(body.hasOwnProperty('description'))
+	{
+		res.status(404).send("trim error");
+	}
+ 	
+ 	_.extend(matchedtodo, validattributes);
+ 	res.json(matchedtodo);
+
+});
+
+
 app.listen(portno, function()
 {
 	console.log("server up and running at port" + portno);
