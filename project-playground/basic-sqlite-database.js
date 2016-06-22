@@ -21,53 +21,53 @@ var todo = sequelize.define('todo', {
 });
 
 sequelize.sync({
-	// force: true
+	 force: true
 }).then(function() {
 
-	todo.findById(3).then(function (todos){
-		if(todos){
-			console.log(todos.toJSON());
-		}
-		else
-		{
-			console.log("no todo found");
-		}
-	}).catch(function(error)
-	{
-		console.log(error);
-	});
-})
-
-
-
-// 	console.log('everything is synced');
-
-// 	todo.create({
-// 		description: 'get a trash',
-// 		completed: false
-
-// 	}).then(function() {
-// 		return todo.create({
-// 			description: 'put the value'
-// 		});
-// 	}).then(function() {
-// 		return todo.findAll({
-// 			where: {
-// 				description: {
-// 					$like: '%trash%'
-// 				}
-// 			}
-// 		});
-
-// 	}).then(function(todos) {
-// 		if (todos) {
-// 			todos.forEach(function(todo) {
-// 				console.log(todo.toJSON());
-// 			});
-// 		} else {
-// 			console.log('no todo found');
+// 	todo.findById(3).then(function (todos){
+// 		if(todos){
+// 			console.log(todos.toJSON());
 // 		}
-// 	}).catch(function(e) {
-// 		console.log(e);
+// 		else
+// 		{
+// 			console.log("no todo found");
+// 		}
+// 	}).catch(function(error)
+// 	{
+// 		console.log(error);
 // 	});
-// });
+// })
+
+
+
+	console.log('everything is synced');
+
+	todo.create({
+		description: 'get a trash',
+		completed: false
+
+	}).then(function() {
+		return todo.create({
+			description: 'put the value'
+		});
+	}).then(function() {
+		return todo.findAll({
+			where: {
+				description: {
+					$like: '%trash%'
+				}
+			}
+		});
+
+	}).then(function(todos) {
+		if (todos) {
+			todos.forEach(function(todo) {
+				console.log(todo.toJSON());
+			});
+		} else {
+			console.log('no todo found');
+		}
+	}).catch(function(e) {
+		console.log(e);
+	});
+});
