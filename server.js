@@ -27,7 +27,7 @@ app.get('/todos', function(req, res) {
 	if (queryparams.hasOwnProperty('q') && queryparams.q.length > 0) {
 		// where.description = "%" + queryparams.q + "%";
 		where.description = {
-			like : "%" + queryparams.q + "%"
+			like: "%" + queryparams.q + "%"
 		};
 	}
 
@@ -94,31 +94,41 @@ app.post('/todos', function(req, res) {
 
 app.delete('/todos/:id', function(req, res) {
 	var todoid = parseInt(req.params.id, 10);
-	
-	db.todo.findById(todoid).then(function(todos) {
-		if (!!todos) {
-			res.send(todos.toJSON());
-		} else {
-			res.status(404).send("no todo found");
+
+	db.todo.destroy({
+		where: {
+			id: todoid
 		}
-	}, function(error) {
+	}).then(function(rowsdeleted) {
+		if (rowsdeleted === 0) {
+			res.status(404).json({
+				error: 'no todo found'
+			});
+		} else {
+			res.status(204).send();
+		}
+	}, function(e) {
 		res.status(500).send();
 	});
-	// var matchedtodo;
-	// var matchedtodo = _.findWhere(todos, {
-	// 	id: todoid
-	// });
 
-	// if (!matchedtodo) {
-	// 	res.status(404).json({
-	// 		"error": "id not found"
-	// 	});
-	// } else {
-	// 	todos = _.without(todos, matchedtodo)
-	// 	res.send(matchedtodo);
-	// }
 
 });
+
+// var matchedtodo;
+// var matchedtodo = _.findWhere(todos, {
+// 	id: todoid
+// });
+
+// if (!matchedtodo) {
+// 	res.status(404).json({
+// 		"error": "id not found"
+// 	});
+// } else {
+// 	todos = _.without(todos, matchedtodo)
+// 	res.send(matchedtodo);
+// }
+
+
 
 app.get('/todos/:id', function(req, res) {
 	var todoid = parseInt(req.params.id, 10);
