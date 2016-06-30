@@ -223,23 +223,32 @@ app.post('/users', function(req, res) {
 
 
 app.post('/users/login', function(req, res) {
-	var body = _.pick(req.body, 'email', 'password');
-	// if (typeof body.email == 'string' && typeof body.password == 'string') {
+			var body = _.pick(req.body, 'email', 'password');
+			var token = user.generateToken('authentication');
 
-		db.user.auhtenticate(body).then(function (user){
-			res.json(user.toPublicJSON());
-		},function(e){
-			res.status(401).send(e);
+			
+
+				db.user.auhtenticate(body).then(function(user) {
+					if (token) {
+						res.header('Auth', token).json(user.toPublicJSON());
+					} else {
+						res.status(401).send(e);
+					}
+
+				},function(e) {
+						res.status(401).send(e);
+					});
+				// } else {
+				// 	res.status(404).send();
+				// }
+			});
+
+
+
+		db.sequelize.sync({
+			force: true
+		}).then(function() {
+			app.listen(portno, function() {
+				console.log("server up and running at port" + portno);
+			});
 		});
-	// } else {
-	// 	res.status(404).send();
-	// }
-});
-
-
-
-db.sequelize.sync({force:true}).then(function() {
-	app.listen(portno, function() {
-		console.log("server up and running at port" + portno);
-	});
-});
