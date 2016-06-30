@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyparser = require('body-parser');
 var _ = require("underscore");
+var bcrypt = require('bcrypt')
 var db = require('./db.js');
 var app = express();
 var portno = process.env.PORT || 3000;
@@ -32,7 +33,7 @@ app.get('/todos', function(req, res) {
 	}
 
 
-	db.todo.findAll({
+	db.todo.findOne({
 		where: where
 	}).then(function(todos) {
 			res.send(todos);
@@ -72,7 +73,7 @@ app.post('/todos', function(req, res) {
 	var body = _.pick(req.body, "description", "completed");
 
 	db.todo.create(body).then(function(todo) {
-		res.send(todo.toJSON());
+		res.send(todo);
 	}, function(e) {
 		res.status(400).send(e);
 	});
@@ -205,11 +206,11 @@ app.put('/todos/:id', function(req, res) {
 });
 
 
-app.post('/users',function(req, res){
-	var body = _.pick(req.body,'email','password');
-	db.user.create(body).then(function (user){
+app.post('/users', function(req, res) {
+	var body = _.pick(req.body, 'email', 'password');
+	db.user.create(body).then(function(user) {
 		res.json(user.toPublicJSON());
-	},function (e){
+	}, function(e) {
 		res.status(400).send(e);
 	});
 });
@@ -219,6 +220,20 @@ app.post('/users',function(req, res){
 
 // _.extend(matchedtodo, validattributes);
 // res.json(matchedtodo);
+
+
+app.post('/users/login', function(req, res) {
+	var body = _.pick(req.body, 'email', 'password');
+	// if (typeof body.email == 'string' && typeof body.password == 'string') {
+
+		db.user.auhtenticate(body).then(function (user){
+			res.json(user.toPublicJSON());
+		});
+	// } else {
+	// 	res.status(404).send();
+	// }
+});
+
 
 
 db.sequelize.sync().then(function() {
