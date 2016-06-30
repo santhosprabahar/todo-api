@@ -51,6 +51,9 @@ module.exports = function(sequelize, DataTypes) {
 			auhtenticate: function(body) {
 
 				return new Promise(function(resolve, reject) {
+					if(typeof body.email !== 'string' || typeof body.password !== 'string'){
+						return reject('body error');
+					}
 
 
 					user.findOne({
@@ -60,7 +63,7 @@ module.exports = function(sequelize, DataTypes) {
 					}).then(function(user) {
 						if (!user || !bcrypt.compareSync(body.password, user.get('password_hash'))) {
 							// return res.send();
-							return reject();
+							return reject('validate error');
 						}
 						resolve(user);
 

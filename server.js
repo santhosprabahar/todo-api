@@ -228,6 +228,8 @@ app.post('/users/login', function(req, res) {
 
 		db.user.auhtenticate(body).then(function (user){
 			res.json(user.toPublicJSON());
+		},function(e){
+			res.status(401).send(e);
 		});
 	// } else {
 	// 	res.status(404).send();
@@ -236,7 +238,7 @@ app.post('/users/login', function(req, res) {
 
 
 
-db.sequelize.sync({force:true}).then(function() {
+db.sequelize.sync().then(function() {
 	app.listen(portno, function() {
 		console.log("server up and running at port" + portno);
 	});
