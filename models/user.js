@@ -4,7 +4,7 @@ var bcrypt = require('bcrypt');
 var _ = require('underscore');
 
 module.exports = function(sequelize, DataTypes) {
-	var user =  sequelize.define('user', {
+	var user = sequelize.define('user', {
 		email: {
 			type: DataTypes.STRING,
 			allowNUll: false,
@@ -53,7 +53,7 @@ module.exports = function(sequelize, DataTypes) {
 			auhtenticate: function(body) {
 
 				return new Promise(function(resolve, reject) {
-					if(typeof body.email !== 'string' || typeof body.password !== 'string'){
+					if (typeof body.email !== 'string' || typeof body.password !== 'string') {
 						return reject('body error');
 					}
 
@@ -73,29 +73,29 @@ module.exports = function(sequelize, DataTypes) {
 						reject();
 					});
 				});
-			}
-		},
+			},
 
-		findByToken: function(token){
-			return new Promise(function (resolve, reject){
-				try{
-					var dcodedJWT = jwt.verify(token, 'qwert123%%');
-					var bytes = cryptojs.AES.decrypt(decodedJWT.token, 'abc123$$');
-					var tokenData = JSON.parse(bytes.toString(cryptojs.enc.Utf8));
+			FindByToken: function(token) {
+				return new Promise(function(resolve, reject) {
+					try {
+						var decodedJWT = jwt.verify(token, 'qwert123%%');
+						var bytes = cryptojs.AES.decrypt(decodedJWT.token, 'abc123$$');
+						var tokenData = JSON.parse(bytes.toString(cryptojs.enc.Utf8));
 
-					user.findById(tokenData.id).then(function (user){
-						if(user){
-							resolve(user);
-						}else{
-							reject();							
-						}
-					},function(e){
+						user.findById(tokenData.id).then(function(user) {
+							if (user) {
+								resolve(user);
+							} else {
+								reject();
+							}
+						}, function(e) {
+							reject();
+						});
+					} catch (e) {
 						reject();
-					});
-				}catch(e){
-					reject();
-				}
-			});
+					}
+				});
+			}
 		},
 
 		instanceMethods: {
@@ -103,24 +103,26 @@ module.exports = function(sequelize, DataTypes) {
 				var json = this.toJSON();
 				return _.pick(json, 'id', 'email', 'createdAt', 'updatedAt');
 			},
-			generateToken: function(type){
-				if(!_.isString(type)){
+			generateToken: function(type) {
+				if (!_.isString(type)) {
 					return undefined;
 				}
 
-				try{
-					var stringData = JSON.stringify({id: this.get('id'), type: type});
+				try {
+					var stringData = JSON.stringify({
+						id: this.get('id'),
+						type: type
+					});
 					var ecnryptedData = cryptojs.AES.encrypt(stringData, 'abc123$$').toString();
 					var token = jwt.sign({
 						token: ecnryptedData
 					}, 'qwert123%%');
 
 					return token;
-				}catch (e) {
+				} catch (e) {
 					console.error(e);
 					return undefined;
-				}	
-
+				}
 
 
 
