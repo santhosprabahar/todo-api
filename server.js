@@ -270,7 +270,7 @@ app.post('/users/login', function(req, res) {
 
 
 db.sequelize.sync({
-	// force: true
+	 force: true
 }).then(function() {
 	app.listen(portno, function() {
 		console.log("server up and running at port" + portno);
