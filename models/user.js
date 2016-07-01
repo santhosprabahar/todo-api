@@ -50,7 +50,7 @@ module.exports = function(sequelize, DataTypes) {
 		classMethods: {
 
 
-			auhtenticate: function(body) {
+			authenticate: function(body) {
 
 				return new Promise(function(resolve, reject) {
 					if (typeof body.email !== 'string' || typeof body.password !== 'string') {
